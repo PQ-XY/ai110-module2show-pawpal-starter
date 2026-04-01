@@ -115,12 +115,19 @@
 
 - How did you use AI tools during this project (for example: design brainstorming, debugging, refactoring)?
     design brainstorming, debugging, refactoring
+
 - What kinds of prompts or questions were most helpful?
+    prompts with details/examples
 
 **b. Judgment and verification**
 
 - Describe one moment where you did not accept an AI suggestion as-is.
+
+    **The UML diagram with Mermaid syntax**: The AI generated a detailed class diagram with note blocks showing relationships and method details. When I tried to render it, the diagram failed due to syntax errors in the note blocks.
+
 - How did you evaluate or verify what the AI suggested?
+
+    I tested the generated Mermaid code by attempting to render it. When it failed, I identified the problematic `note` syntax, simplified the diagram to remove those blocks, and re-rendered it successfully. This taught me that generated code needs validation before use—especially for specialized formats like Mermaid. I then verified the simplified version was semantically correct by comparing class names, attributes, and relationships to the actual implementation in `pawpal_system.py`.
 
 ---
 
@@ -129,12 +136,38 @@
 **a. What you tested**
 
 - What behaviors did you test?
+
+    1. **Sorting** — Tasks ordered chronologically by due_time
+    2. **Filtering** — Tasks filtered by pet name and completion status (case-insensitive)
+    3. **Recurring tasks** — Daily/weekly tasks generate next occurrence when marked complete
+    4. **Conflict detection** — Same-pet and owner conflicts detected at identical times
+    5. **Pet management** — Duplicate pets rejected, valid pets added; remove and reuse names
+
 - Why were these tests important?
+
+    - Sorting ensures the owner sees tasks in the right order throughout the day
+    - Filtering lets owners focus on specific pets or pending work
+    - Recurrence prevents manual re-creation of hundreds of tasks over a pet's lifetime
+    - Conflict detection prevents logically impossible schedules (owner can't do two things at once)
+    - Pet management prevents accidental duplicates and maintains data integrity
+
+    All 32 tests pass, giving confidence that core scheduling logic is correct.
 
 **b. Confidence**
 
 - How confident are you that your scheduler works correctly?
+
+    **⭐⭐⭐⭐⭐ (5/5 stars)** — All 32 tests pass, covering core features and edge cases. The four algorithms (sorting, filtering, recurrence, conflict detection) work correctly in isolation and integration. The duplicate pet prevention bug was identified and fixed with 8 additional tests. The system handles production scenarios: empty lists, single items, multiple pets, recurring tasks, and conflicts.
+
 - What edge cases would you test next if you had more time?
+
+    1. **Timezone handling** — Tasks across different timezones or daylight saving time transitions
+    2. **Large-scale scheduling** — 100+ tasks, multiple owners, performance under load
+    3. **Recurring task edge cases** — What happens if a daily task's date changes on leap day or month boundaries?
+    4. **Concurrent updates** — Multiple users adding/completing tasks simultaneously
+    5. **Task chains** — Dependencies (e.g., "medicate before walk") or prerequisite tasks
+    6. **Owner/pet deletion** — Cascade behavior when removing an owner or pet with active tasks
+    7. **Invalid recurrence patterns** — User enters "biweekly" or malformed recurrence strings
 
 ---
 
@@ -143,11 +176,14 @@
 **a. What went well**
 
 - What part of this project are you most satisfied with?
+    The backend logic.
 
 **b. What you would improve**
 
 - If you had another iteration, what would you improve or redesign?
+    I may try to incorporate LLM in the app for AI features.
 
 **c. Key takeaway**
 
 - What is one important thing you learned about designing systems or working with AI on this project?
+    I think we have to understand the what we need and always act as a leader in communicating with AI. 
