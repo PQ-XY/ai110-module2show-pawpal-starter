@@ -92,19 +92,35 @@ class Owner:
         self.pets: List[Pet] = []
         self.scheduler: 'Scheduler' = None
 
-    def add_pet(self, pet: Pet) -> None:
-        """Add a pet to the owner's collection"""
-        pass
+    def add_pet(self, pet: Pet) -> bool:
+        """
+        Add a pet to the owner's collection.
+        Returns True if pet was added, False if pet already exists (duplicate).
+        Checks for duplicate by pet_id (primary key).
+        """
+        # Check if pet with this ID already exists
+        if any(p.pet_id == pet.pet_id for p in self.pets):
+            return False
+        
+        # Check if pet with this name already exists (warning)
+        if any(p.name.lower() == pet.name.lower() for p in self.pets):
+            return False
+        
+        self.pets.append(pet)
+        return True
 
-    def remove_pet(self, pet_id: str) -> None:
+    def remove_pet(self, pet_id: str) -> bool:
         """
         Removes a pet from the owner by its pet_id.
+        Returns True if pet was removed, False if pet not found.
         """
-        pass
+        original_length = len(self.pets)
+        self.pets = [p for p in self.pets if p.pet_id != pet_id]
+        return len(self.pets) < original_length
 
     def get_pets(self) -> List[Pet]:
         """Retrieve all pets owned by this owner"""
-        pass
+        return self.pets
 
     def update_profile(self) -> None:
         """Update the owner's profile information"""

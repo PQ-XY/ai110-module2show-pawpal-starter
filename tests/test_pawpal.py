@@ -547,3 +547,217 @@ class TestConflictDetection:
         
         # Should detect conflicts in slots 1 and 3, not 2
         assert len(conflicts) >= 2
+
+
+class TestPetManagement:
+    """Tests for pet management and duplicate prevention"""
+    
+    def test_add_pet_success(self, owner):
+        """Successfully add a pet to owner's collection"""
+        pet = Pet(
+            pet_id="pet_001",
+            name="Max",
+            species="Dog",
+            breed="Golden Retriever",
+            age=5,
+            health_info="Healthy",
+            owner=owner
+        )
+        
+        result = owner.add_pet(pet)
+        
+        assert result is True
+        assert len(owner.pets) == 1
+        assert owner.pets[0].name == "Max"
+    
+    def test_add_duplicate_pet_by_id(self, owner):
+        """Cannot add pet with duplicate pet_id"""
+        pet1 = Pet(
+            pet_id="pet_001",
+            name="Max",
+            species="Dog",
+            breed="Golden Retriever",
+            age=5,
+            health_info="Healthy",
+            owner=owner
+        )
+        
+        pet2 = Pet(
+            pet_id="pet_001",  # Same ID
+            name="Luna",
+            species="Dog",
+            breed="Husky",
+            age=3,
+            health_info="Healthy",
+            owner=owner
+        )
+        
+        result1 = owner.add_pet(pet1)
+        result2 = owner.add_pet(pet2)
+        
+        assert result1 is True
+        assert result2 is False  # Duplicate ID rejected
+        assert len(owner.pets) == 1
+    
+    def test_add_duplicate_pet_by_name(self, owner):
+        """Cannot add pet with duplicate name (case-insensitive)"""
+        pet1 = Pet(
+            pet_id="pet_001",
+            name="Max",
+            species="Dog",
+            breed="Golden Retriever",
+            age=5,
+            health_info="Healthy",
+            owner=owner
+        )
+        
+        pet2 = Pet(
+            pet_id="pet_002",
+            name="max",  # Same name, different case
+            species="Dog",
+            breed="Husky",
+            age=3,
+            health_info="Healthy",
+            owner=owner
+        )
+        
+        result1 = owner.add_pet(pet1)
+        result2 = owner.add_pet(pet2)
+        
+        assert result1 is True
+        assert result2 is False  # Duplicate name rejected
+        assert len(owner.pets) == 1
+    
+    def test_add_multiple_different_pets(self, owner):
+        """Can add multiple pets with different names"""
+        pet1 = Pet(
+            pet_id="pet_001",
+            name="Max",
+            species="Dog",
+            breed="Golden Retriever",
+            age=5,
+            health_info="Healthy",
+            owner=owner
+        )
+        
+        pet2 = Pet(
+            pet_id="pet_002",
+            name="Luna",
+            species="Dog",
+            breed="Husky",
+            age=3,
+            health_info="Healthy",
+            owner=owner
+        )
+        
+        result1 = owner.add_pet(pet1)
+        result2 = owner.add_pet(pet2)
+        
+        assert result1 is True
+        assert result2 is True
+        assert len(owner.pets) == 2
+        assert owner.pets[0].name == "Max"
+        assert owner.pets[1].name == "Luna"
+    
+    def test_remove_pet_by_id(self, owner):
+        """Successfully remove a pet by pet_id"""
+        pet1 = Pet(
+            pet_id="pet_001",
+            name="Max",
+            species="Dog",
+            breed="Golden Retriever",
+            age=5,
+            health_info="Healthy",
+            owner=owner
+        )
+        
+        pet2 = Pet(
+            pet_id="pet_002",
+            name="Luna",
+            species="Dog",
+            breed="Husky",
+            age=3,
+            health_info="Healthy",
+            owner=owner
+        )
+        
+        owner.add_pet(pet1)
+        owner.add_pet(pet2)
+        assert len(owner.pets) == 2
+        
+        result = owner.remove_pet("pet_001")
+        
+        assert result is True
+        assert len(owner.pets) == 1
+        assert owner.pets[0].name == "Luna"
+    
+    def test_remove_nonexistent_pet(self, owner):
+        """Cannot remove a pet that doesn't exist"""
+        result = owner.remove_pet("pet_999")
+        
+        assert result is False
+        assert len(owner.pets) == 0
+    
+    def test_reuse_name_after_removal(self, owner):
+        """Can add pet with same name after removing previous pet"""
+        pet1 = Pet(
+            pet_id="pet_001",
+            name="Max",
+            species="Dog",
+            breed="Golden Retriever",
+            age=5,
+            health_info="Healthy",
+            owner=owner
+        )
+        
+        pet2 = Pet(
+            pet_id="pet_002",
+            name="Max",  # Same name
+            species="Dog",
+            breed="Husky",
+            age=3,
+            health_info="Healthy",
+            owner=owner
+        )
+        
+        result1 = owner.add_pet(pet1)
+        assert result1 is True
+        
+        result2 = owner.add_pet(pet2)
+        assert result2 is False  # Can't add duplicate
+        
+        owner.remove_pet("pet_001")
+        result3 = owner.add_pet(pet2)
+        assert result3 is True  # Now can add with same name
+        assert len(owner.pets) == 1
+    
+    def test_get_pets(self, owner):
+        """Get list of all owner's pets"""
+        pet1 = Pet(
+            pet_id="pet_001",
+            name="Max",
+            species="Dog",
+            breed="Golden Retriever",
+            age=5,
+            health_info="Healthy",
+            owner=owner
+        )
+        
+        pet2 = Pet(
+            pet_id="pet_002",
+            name="Luna",
+            species="Dog",
+            breed="Husky",
+            age=3,
+            health_info="Healthy",
+            owner=owner
+        )
+        
+        owner.add_pet(pet1)
+        owner.add_pet(pet2)
+        
+        pets = owner.get_pets()
+        
+        assert len(pets) == 2
+        assert pets[0].name == "Max"
+        assert pets[1].name == "Luna"
