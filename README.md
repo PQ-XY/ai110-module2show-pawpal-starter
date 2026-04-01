@@ -93,7 +93,7 @@ The app will open in your browser at `http://localhost:8501`
 
 Here's the PawPal+ Streamlit app in action:
 
-<a href="./Screenshot%202026-03-31%20at%2011.04.16%20PM.png" target="_blank"><img src='./Screenshot%202026-03-31%20at%2011.04.16%20PM.png' alt="PawPal+ Streamlit Interface Demo" width="100%" /></a>
+<a href="./Screenshot.png" target="_blank"><img src='./Screenshot.png' alt="PawPal+ Streamlit Interface Demo" width="100%" /></a>
 
 The interface features:
 - **Owner & Pet Management** — Register and manage pets with species, breed, age, and health info
